@@ -1,1 +1,28 @@
+name: Build cBot
 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:        # erlaubt manuellen Start per Knopf (auch in der GitHub-Handy-App)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: .NET 6 einrichten
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Kompilieren (erzeugt .algo)
+        run: dotnet build -c Release
+
+      - name: .algo als Download bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: MultiStrategyBot-algo
+          path: '**/*.algo'
+          if-no-files-found: error
